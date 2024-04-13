@@ -1,17 +1,6 @@
 import { ThemeProvider, createTheme } from "@mui/material";
 import { type PropsWithChildren } from "react";
 
-declare module '@mui/material/styles' {
-  interface PaletteColor {
-    navItem: string;
-  }
-
-  interface SimplePaletteColorOptions {
-    navItem: string;
-  }
-}
-
-
 const theme = createTheme({
   typography: {
     fontFamily: [
@@ -25,10 +14,9 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "rgba(0, 0, 0, 0.6)",
-      navItem: "rgba(0, 0, 0, 0.6)"
     },
     background: {
-      default: 'linear-gradient(90deg, #ff3131 1%, #ff914d 99%)',
+      default: 'linear-gradient(90deg, #ff3131 1%, #ff914d 80%)',
     }
   },
   breakpoints: {
