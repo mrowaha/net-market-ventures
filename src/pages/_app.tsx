@@ -21,12 +21,17 @@ import '@fontsource/open-sans/700.css';
 import type { AppProps } from "next/app";
 
 import AppThemeProvider from "@/theme";
-import { createTheme } from "@mui/material";
+import Layout from "@/layout";
+import { Provider } from "jotai";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <AppThemeProvider>
-      <Component {...pageProps} />
-    </AppThemeProvider>
+    <Provider>
+      <AppThemeProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </AppThemeProvider>
+    </Provider>
   );
 }

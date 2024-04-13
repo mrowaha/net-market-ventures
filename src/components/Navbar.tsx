@@ -4,23 +4,20 @@ import { AppBar, Avatar, Box, Button, ButtonGroup } from "@mui/material";
 import {styled} from "@mui/system";
 import { useScroll, useTransform } from "framer-motion";
 import Logo from "@/assets/logo-large.webp";
-import { useTheme } from "@emotion/react";
 
 
 const NavbarContainer = styled(AppBar)(({theme}) => ({
   backgroundColor: "white",
-  height: "80px",
   fontSize: "1rem",
-  overflowY: "hidden"
+  overflowY: "hidden",
 }))
 
 
-export default function NavBar() {
+
+export default function NavBar({onHeightChange} : {onHeightChange : (newHeight : number) => void}) {
 
   const navbarRef = useRef<HTMLElement | null>(null);
   const avatarRef = useRef<HTMLDivElement | null>(null);
-
-  const theme = useTheme();
 
   const {scrollYProgress} = useScroll();
   const height = useTransform(scrollYProgress, [0, 1], [80, 50]);
@@ -30,6 +27,7 @@ export default function NavBar() {
     height.on("change", (latest) => {
       if (navbarRef.current) {
         navbarRef.current.style.height = latest.toString() + "px";
+        requestAnimationFrame(() => onHeightChange(latest));
         if (avatarRef.current) {
           avatarRef.current.style.width = (latest - 10).toString() + "px";
           avatarRef.current.style.height = (latest - 10).toString() + "px";
@@ -58,9 +56,9 @@ export default function NavBar() {
           }}
         />
         <Box>
-          <Button sx={{textTransform: "none", fontSize: "1em"}}>Home</Button>
-          <Button sx={{textTransform: "none", fontSize: "1em"}}>About Us</Button>
-          <Button sx={{textTransform: "none", fontSize: "1em"}}>Services</Button>
+          <Button sx={{textTransform: "none", fontSize: "1em"}} href="#home">Home</Button>
+          <Button sx={{textTransform: "none", fontSize: "1em"}} href="#about">About Us</Button>
+          <Button sx={{textTransform: "none", fontSize: "1em"}} href="#services">Services</Button>
           <Button sx={{textTransform: "none", fontSize: "1em"}}>Contact Us</Button>
         </Box>
       </Box>
