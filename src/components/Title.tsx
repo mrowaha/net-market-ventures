@@ -12,7 +12,7 @@ export default function Title(props : TitleProps) {
 
   return (
       <Typography ref={titleRef} variant="h4" sx={{backgroundColor: "#49494b", color: "#fff", paddingBlock: "2.25rem"}} textAlign="center">
-        <Fade in={isInView} timeout={5000}>
+        <Fade in={isInView} timeout={1500}>
           <span>
             {props.title}
           </span>

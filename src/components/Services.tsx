@@ -1,4 +1,4 @@
-import { Typography, Box, Grid, Stack, Divider, Grow, useTheme, Button, Collapse } from "@mui/material";
+import { Typography, Box, Grid, Stack, Divider, Grow, useTheme, Button, Collapse, Slide } from "@mui/material";
 import * as React from "react";
 import Title from "./Title";
 import ServiceCard from "./ServiceCard";
@@ -14,6 +14,8 @@ export default function Services() {
   const stackRef = React.useRef<HTMLDivElement | null>(null);
   const isInView = useInView(stackRef);
   const [hasDisplayed, setHasDisplayed] = React.useState(false);
+  const [showCallIcon, setShowCallIcon] = React.useState(false);
+
 
   React.useLayoutEffect(() => {
     if (isInView && !hasDisplayed) {
@@ -31,6 +33,7 @@ export default function Services() {
           <Grid item xs={10} sm={5} md={3} lg={3}>
             <ServiceCard
               grow={hasDisplayed}
+              growTimeout={1500}
               title="Follow MAP"
               icon={<AccountBalanceWallet style={{stroke: "#ff3131", fill: "#ff3131", strokeWidth: "0.25px", fontSize: "5em"}}/>}
             >
@@ -45,7 +48,7 @@ export default function Services() {
           <Grid item xs={10} sm={5} md={3} lg={3}>
             <ServiceCard
               grow={hasDisplayed}
-              growTimeout={1000}
+              growTimeout={2500}
               title="Maximizing Sales"
               icon={<TrendingUp style={{stroke: "#ff3131", fill: "#ff3131", strokeWidth: "0.25px", fontSize: "5em"}} />}
             >
@@ -60,7 +63,7 @@ export default function Services() {
           <Grid item xs={10} sm={5} md={3} lg={3}>
             <ServiceCard
               grow={hasDisplayed}
-              growTimeout={2000}
+              growTimeout={3500}
               title="Building Your Brand"
               icon={<Storefront style={{stroke: "#ff3131", fill: "#ff3131", strokeWidth: "0.25px", fontSize: "5em"}} />}
             >
@@ -73,7 +76,7 @@ export default function Services() {
           </Grid>
         </Grid>
         <Divider sx={{backgroundColor: "#ff3131", width: "80%", alignSelf: "center"}} />
-        <Stack direction={{xs: "column", md: "row"}} justifyContent="space-between" sx={{paddingBlock: "1.5rem", overflow: "hidden", width: "80%", alignSelf: "center"}}>
+        <Stack gap={1} direction={{xs: "column", md: "row"}} justifyContent="space-between" sx={{paddingBlock: "1.5rem", overflow: "hidden", width: "80%", alignSelf: "center"}}>
           <Box sx={{display: "flex", alignItems: "center", width: {md: "45%"}}}>
             <div>
               <Typography variant="h4">
@@ -84,12 +87,16 @@ export default function Services() {
               <br/>Let NetMarket be your ally in the digital marketplace, where your success is our success!
               </Typography>
               <Button
-                size="large"
+                href="#contact"
                 variant="contained"
-                endIcon={<Call />}
-                sx={{textTransform: "none", background: theme.palette.background.default, borderRadius: "15px"}}
+                sx={{isolation:"isolate", textTransform: "none",position: "relative", background: theme.palette.background.default, borderRadius: "15px", overflow: "hidden"}}
+                onMouseEnter={() => setShowCallIcon(true)}
+                onMouseLeave={() => setShowCallIcon(false)}
               >
-                Contact Us Now
+                <Typography>Contact Us Now</Typography>
+                <Collapse in={showCallIcon} orientation="horizontal" sx={{position: "relative", transform: "translateY(10%)"}}>    
+                  <Call fontSize="small" />
+                </Collapse>
               </Button>
             </div>
           </Box>

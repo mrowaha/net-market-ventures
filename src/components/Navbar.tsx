@@ -1,10 +1,11 @@
-import {useEffect, useRef} from "react";
+import Link from "next/link";
+import {useEffect, useRef, useState} from "react";
 
-import { AppBar, Avatar, Box, Button, ButtonGroup } from "@mui/material";
+import { AppBar, Avatar, Box, Button, useTheme, useMediaQuery, Typography, IconButton, Menu, MenuItem } from "@mui/material";
 import {styled} from "@mui/system";
 import { useScroll, useTransform } from "framer-motion";
 import Logo from "@/assets/logo-large.webp";
-
+import MenuIcon from '@mui/icons-material/Menu';
 
 const NavbarContainer = styled(AppBar)(({theme}) => ({
   backgroundColor: "white",
@@ -22,6 +23,18 @@ export default function NavBar({onHeightChange} : {onHeightChange : (newHeight :
   const {scrollYProgress} = useScroll();
   const height = useTransform(scrollYProgress, [0, 1], [80, 50]);
   const font = useTransform(scrollYProgress, [0, 1], [1, 0.75]);
+
+  const theme = useTheme();
+  const isSmallViewport = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const menuELRef = useRef<HTMLDivElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [openMenu, setOpenMenu] = useState(false);
+
+  const handleClick = () => {
+    setAnchorEl(navbarRef.current);
+    setOpenMenu(true);
+  }
 
   useEffect(() => {
     height.on("change", (latest) => {
@@ -55,13 +68,57 @@ export default function NavBar({onHeightChange} : {onHeightChange : (newHeight :
             width: "70px"
           }}
         />
-        <Box>
-          <Button sx={{textTransform: "none", fontSize: "1em"}} href="#home">Home</Button>
-          <Button sx={{textTransform: "none", fontSize: "1em"}} href="#about">About Us</Button>
-          <Button sx={{textTransform: "none", fontSize: "1em"}} href="#services">Services</Button>
-          <Button sx={{textTransform: "none", fontSize: "1em"}}>Contact Us</Button>
-        </Box>
+        {
+          isSmallViewport?
+          <>
+            <IconButton onClick={handleClick}>
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={openMenu}
+              onClose={() => setOpenMenu(false)}
+              marginThreshold={0}
+              PaperProps={{
+                style: {
+                      width: "80%",
+                      left: 0,
+                      right: 0,
+                      borderRadius: 0,
+                      marginInline: "auto"
+                    }
+              }}
+            >
+              <MenuItem><Link href="#home" style={{textDecoration: "none", color: theme.palette.primary.main}}>Home</Link></MenuItem>
+              <MenuItem><Link href="#about" style={{textDecoration: "none", color: theme.palette.primary.main}}>About Us</Link></MenuItem>
+              <MenuItem><Link href="#services" style={{textDecoration: "none", color: theme.palette.primary.main}}>Services</Link></MenuItem>
+              <MenuItem><Link href="#contact" style={{textDecoration: "none", color: theme.palette.primary.main}}>Contact Us</Link></MenuItem>
+            </Menu>
+          </>
+          : // else
+          <Box>
+            <NavBarLink href="#home" title="Home" />
+            <NavBarLink href="#about" title="About Us" />
+            <NavBarLink href="#services" title="Services" />
+            <NavBarLink href="#contact" title="Contact Us" />
+          </Box>
+        }
       </Box>
     </NavbarContainer>
+  )
+}
+
+interface NavBarLinkProps {
+  title: string;
+  href: string;
+}
+
+function NavBarLink(props: NavBarLinkProps) {
+  return (
+    <Button sx={{textTransform: "none", fontSize: "1em"}} href={props.href}>
+      <Typography sx={{typography: {sm: "body2", lg: "body1"}}}>
+        {props.title}
+      </Typography>
+    </Button>    
   )
 }
