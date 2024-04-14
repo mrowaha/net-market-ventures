@@ -55,7 +55,7 @@ function Hero() {
           </strong>  
         </Typography>
         <Typography variant="body1" color="#fff">
-          Accelerate your brand's growth by getting your products sold on<br/>the world's renowned online marketplaces.
+          Accelerate your brand&apos;s growth by getting your products sold on<br/>the world&apos;s renowned online marketplaces.
         </Typography>
         <Typography variant="body1" color="#fff">
           Our commitment to partnership-driven success transforms online sales into<br/>a streamlined, impactful journey for every brand we collaborate with.

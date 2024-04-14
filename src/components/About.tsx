@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { DomainImage } from "./DomainImage";
 import { useInView } from "framer-motion";
 
-
 import AboutImage from "@/assets/about-us.jpg";
 
 const NoSSRTitle = dynamic(() => import("./Title"), {
@@ -40,7 +39,7 @@ export default function About() {
               }
             }}>
             Discover the difference with NetMarket Ventures, where we redefine the journey of online retail. Specializing in selling products through key third-party platforms such as Amazon, eBay, and Walmart, our approach elevates the digital marketplace experience. By ensuring every product we feature authentically represents its brand, we not only enhance brand images but also improve their visibility.
-            Our core lies in collaboration, working intimately with brands and distributors to ignite customer engagement across the globe's leading online marketplaces. With a robust market presence that we continuously aim to strengthen, NetMarket Ventures stands as a beacon for growth, offering unparalleled value to promising brands seeking to carve out their niche. Our suite of services is designed to foster long-term benefits, propelling both our partners and us towards mutual success. Choose NetMarket Ventures, where your brand’s potential is limitless, and success is a shared journey.
+            Our core lies in collaboration, working intimately with brands and distributors to ignite customer engagement across the globe&apos;s leading online marketplaces. With a robust market presence that we continuously aim to strengthen, NetMarket Ventures stands as a beacon for growth, offering unparalleled value to promising brands seeking to carve out their niche. Our suite of services is designed to foster long-term benefits, propelling both our partners and us towards mutual success. Choose NetMarket Ventures, where your brand’s potential is limitless, and success is a shared journey.
             </Typography>
           </Box>
         </Slide>

@@ -83,7 +83,7 @@ export default function Services() {
                 Helping You Sell More!
               </Typography>
               <Typography paragraph color={theme.palette.primary.main} textAlign="justify">
-              At NetMarket Ventures, we're not just another seller; we're here to amplify your sales and broaden your reach. Collaboration is at the heart of what we do. We work closely with brands and distributors, harnessing our expertise to boost customer engagement on some of the world’s most renowned online marketplaces.   
+              At NetMarket Ventures, we&apos;re not just another seller; we&apos;re here to amplify your sales and broaden your reach. Collaboration is at the heart of what we do. We work closely with brands and distributors, harnessing our expertise to boost customer engagement on some of the world’s most renowned online marketplaces.   
               <br/>Let NetMarket be your ally in the digital marketplace, where your success is our success!
               </Typography>
               <Button
