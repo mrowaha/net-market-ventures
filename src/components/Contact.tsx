@@ -9,12 +9,7 @@ import { FacebookIcon, InstagramIcon, LinkedinIcon, XIcon } from "@/icons";
 import ContactLink from "./ContactLink";
 import Link from "next/link";
 
-const contactSchema = z.object({
-  firstName: z.string().trim().min(1, {message: "First Name cannot be blank"}),
-  lastName: z.string().trim().min(1, {message: "Last Name cannot be blank"}),
-  email: z.string().email(),
-  message: z.string().trim().min(1, {message: "Message cannot be blank"})
-})
+import contactSchema from "@/lib/schema/contact";
 
 type Error = {success: true} | {success: false, message: string}
 
@@ -43,7 +38,7 @@ export default function Contact() {
 
   const [errors, setErrors] = React.useState<Errors>(start);
 
-  const handleEmail = () => {
+  const handleEmail = async () => {
     const validate = contactSchema.safeParse({
       firstName,
       lastName,
@@ -62,6 +57,21 @@ export default function Contact() {
       console.log(newErrors);
     } else {
       setErrors({...start});
+    }
+
+    // send email
+    try {
+      const res = await fetch('/api/contact', {
+        method: "POST",
+        body: JSON.stringify(validate)
+      })
+      if (res.status !== 200) {
+        throw new Error('failed');
+      }
+      const json = await res.json();
+      console.log(json);
+    } catch (err) {
+      console.log(err);
     }
   }
 
