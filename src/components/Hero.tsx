@@ -1,4 +1,4 @@
-import { Grid, Typography, Box, Button, useTheme, useMediaQuery } from "@mui/material";
+import { Grid, Typography, Box, Button, Stack, useTheme, useMediaQuery } from "@mui/material";
 import {styled} from "@mui/system";
 import * as React from "react";
 
@@ -8,10 +8,15 @@ import { DomainImage } from "./DomainImage";
 import { useAtom } from "jotai";
 import { navbarAtom } from "@/layout";
 
-const HeroContainer = styled(Grid)(({theme}) => ({
+const HeroStack = styled(Stack)(({theme}) => ({
   background: theme.palette.background.default,
   position: "relative",
-  isolation: "isolate"
+  isolation: "isolate",
+  paddingInline: "5rem",
+  [theme.breakpoints.down("sm")]: {
+    paddingInline: "2.5rem"
+  },
+  paddingBlockEnd: "5rem",
 }))
 
 function Hero() {
@@ -21,23 +26,12 @@ function Hero() {
   const smallThanMid = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <HeroContainer container alignItems="center" sx={{paddingTop: `${navbar.height}px`}}>
-      <Grid item xs={12} md={6} lg={7} sx={{
-        aspectRatio: {lg: "16/10", xs: "1/1"},
-        padding: "4rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-        alignItems: {
-          xs: "center",
-          md: "flex-start",
-        }
-      }}>
+    <HeroStack gap={2} sx={{paddingTop: `calc(${navbar.height}px + 5rem)`}}>
         <Typography
           sx={{ 
             color: "#fff", 
             textAlign: {xs: "center", sm: "center", md: "left"}, 
-            typography: {lg: "h3", md: "h3", sm:"h3", xs:"h3"},
+            typography: {lg: "h3", md: "h3", sm:"h3", xs:"h4"},
             "&:after": {
               display: "block",
               content: '""',
@@ -63,17 +57,16 @@ function Hero() {
         <Button href="#services" sx={{textTransform: "none", borderRadius: "15px", backgroundColor: "#514339", border: "1px solid rgba(18, 19, 22, 0.68)", width: "fit-content"}} variant="contained">
           Learn More
         </Button>
-      </Grid>
-      <Box sx={{position: "absolute", zIndex: -1, opacity: 0.15, inset: 0}}>
-        <DomainImage 
-          src={smallThanMid? BrandCentered.src : Brand.src}
-          alt="author"
-          imageStyles={{
-            objectFit: "fill"
-          }}
-        />
-      </Box> 
-    </HeroContainer>
+        <Box sx={{position: "absolute", zIndex: -1, opacity: 0.15, inset: 0}}>
+          <DomainImage 
+            src={smallThanMid? BrandCentered.src : Brand.src}
+            alt="author"
+            imageStyles={{
+              objectFit: "fill"
+            }}
+          />
+        </Box>
+    </HeroStack>
   )
 }
 

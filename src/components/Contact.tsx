@@ -1,5 +1,6 @@
-import { ArrowForward, ArrowForwardIosRounded, Instagram, Mail } from "@mui/icons-material";
-import { Stack, Typography, useTheme, Box, FilledInput, TextField, Grid, Button, Collapse, SvgIcon, IconButton } from "@mui/material";
+import { z } from "zod";
+import { ArrowForward, ArrowForwardIosRounded, ErrorOutline, Instagram, Mail } from "@mui/icons-material";
+import { Stack, Typography, useTheme, Box, FilledInput, TextField, Grid, Button, Collapse, Popover, FormControl, TextFieldProps, Badge } from "@mui/material";
 import * as React from "react";
 
 import LogoWhite from "@/assets/logo-white.png";
@@ -8,10 +9,61 @@ import { FacebookIcon, InstagramIcon, LinkedinIcon, XIcon } from "@/icons";
 import ContactLink from "./ContactLink";
 import Link from "next/link";
 
-export default function Contact() {
+const contactSchema = z.object({
+  firstName: z.string().trim().min(1, {message: "First Name cannot be blank"}),
+  lastName: z.string().trim().min(1, {message: "Last Name cannot be blank"}),
+  email: z.string().email(),
+  message: z.string().trim().min(1, {message: "Message cannot be blank"})
+})
 
+type Error = {success: true} | {success: false, message: string}
+
+type Errors = {
+  firstName: Error;
+  lastName:  Error;
+  email: Error;
+  message: Error;
+}
+
+const start : Errors = {
+  firstName: {success: true},
+  lastName: {success: true},
+  email: {success: true},
+  message: {success: true}
+};
+
+export default function Contact() {
   const theme = useTheme();
   const [showSubmitIcon, setShowSubmitIcon] = React.useState(false);
+
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [message, setMessage] = React.useState("");
+
+  const [errors, setErrors] = React.useState<Errors>(start);
+
+  const handleEmail = () => {
+    const validate = contactSchema.safeParse({
+      firstName,
+      lastName,
+      email,
+      message
+    })
+    
+    if (!validate.success) {
+      const newErrors : Errors = {...start};
+      const {error} = validate;
+      error.issues.forEach((issue) => {
+        const path = issue.path[0] as keyof Errors;
+        newErrors[path] = {success: false, message: issue.message}
+      })
+      setErrors(newErrors);
+      console.log(newErrors);
+    } else {
+      setErrors({...start});
+    }
+  }
 
   return (
     <>
@@ -21,50 +73,71 @@ export default function Contact() {
         background: theme.palette.background.default,
       }}
     >
-      <Stack gap={2} sx={{
-        margin: "auto",
-        width: {
-          md: "50%",
-          xs: "80%"
-        }}}
-      >
-        <Typography color="#fff" variant="h4">Get In Touch With Us</Typography>
-        <Grid container gap={2} justifyContent="space-between">
-          <Grid item xs={12} md={5.5}>
-          <FilledInput
-            placeholder="First Name"
-            sx={{background: "#fff", width: "100%"}}
-          />
-          </Grid>
-          <Grid item xs={12} md={5.5}>
-          <FilledInput
-            placeholder="Last Name"
-            sx={{background: "#fff", width: "100%"}}
-          />
-          </Grid>
-        </Grid>
-        
-        <FilledInput
-          placeholder="Email"
-          sx={{background: "#fff"}}
-        />
-        <TextField 
-          placeholder="Your Message"
-          sx={{background: "#fff"}}
-          minRows={3}
-          multiline
-        />
-        <Button 
-          onMouseEnter={() => setShowSubmitIcon(true)}
-          onMouseLeave={() => setShowSubmitIcon(false)}
-          sx={{textTransform: "none", borderRadius: "15px", backgroundColor: "#514339", border: "1px solid rgba(18, 19, 22, 0.68)", width: "fit-content", alignSelf: "flex-end"}} variant="contained"
+      <FormControl sx={{width: "100%"}}>
+        <Stack gap={2} sx={{
+          margin: "auto",
+          width: {
+            md: "50%",
+            xs: "80%"
+          }}}
         >
-          Submit
-          <Collapse in={showSubmitIcon} orientation="horizontal" sx={{position: "relative", transform: "translateY(10%)"}}>
-            <ArrowForwardIosRounded />
-          </Collapse>
-        </Button>
-      </Stack>
+          <Typography color="#fff" variant="h4">Get In Touch With Us</Typography>
+            <Grid container gap={2} justifyContent="space-between">
+              <Grid item xs={12} md={5.5}>
+                <ContactField 
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  variant="filled"
+                  error={!errors["firstName"].success}
+                  errorMessage={errors["firstName"].success === false ? errors["firstName"].message : ""}
+                />
+              </Grid>
+              <Grid item xs={12} md={5.5}>
+                <ContactField 
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  variant="filled"
+                  error={!errors["lastName"].success}
+                  errorMessage={errors["lastName"].success === false ? errors["lastName"].message : ""}
+                />
+              </Grid>
+            </Grid>
+            
+            <ContactField
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              variant="filled"
+              error={!errors["email"].success}
+              errorMessage={errors["email"].success === false ? errors["email"].message : ""}
+            />
+
+            <ContactField 
+              placeholder="Your Message"
+              minRows={3}
+              multiline
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              variant="filled"
+              error={!errors["message"].success}
+              errorMessage={errors["message"].success === false ? errors["message"].message : ""}
+            />
+
+            <Button 
+              onMouseEnter={() => setShowSubmitIcon(true)}
+              onMouseLeave={() => setShowSubmitIcon(false)}
+              sx={{textTransform: "none", borderRadius: "15px", backgroundColor: "#514339", border: "1px solid rgba(18, 19, 22, 0.68)", width: "fit-content", alignSelf: "flex-end"}} variant="contained"
+              onClick={handleEmail}
+            >
+              Submit
+              <Collapse in={showSubmitIcon} orientation="horizontal" sx={{position: "relative", transform: "translateY(10%)"}}>
+                <ArrowForwardIosRounded />
+              </Collapse>
+            </Button>
+        </Stack>
+      </FormControl>
     </Box>
 
     {/* Links */}
@@ -148,5 +221,43 @@ export default function Contact() {
       </Grid>
     </Box>
    </>
+  )
+}
+
+
+interface ContactFieldProps extends TextFieldProps<"filled"> {
+  errorMessage? :string
+}
+
+function ContactField(props: ContactFieldProps) {
+  const {sx, ...rest} = props;
+  const theme = useTheme();
+
+  return (
+      <Stack sx={{position: "relative"}}>
+        <TextField 
+          {...rest}
+          sx={{...sx, 
+            background: "#fff",
+          }}
+          inputProps={{
+            style: {color: props.error? theme.palette.error.main : theme.palette.primary.main}
+          }}
+          variant="filled"
+          size="small"
+          required
+          fullWidth
+        />
+        {
+          props.error && <Box sx={{position: "absolute", top: -10, right: 0}}>
+            <Badge badgeContent={<ErrorOutline style={{fill: theme.palette.error.main}} />}>
+
+            </Badge>
+          </Box>
+        }
+        {
+          props.error && <Typography variant="body2" sx={{padding: "0.5rem"}} color={theme.palette.error.main}>{props.errorMessage}</Typography>
+        }
+      </Stack>      
   )
 }

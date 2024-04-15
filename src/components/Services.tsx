@@ -17,7 +17,7 @@ export default function Services() {
   const [showCallIcon, setShowCallIcon] = React.useState(false);
 
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     if (isInView && !hasDisplayed) {
       setHasDisplayed(true);
     }

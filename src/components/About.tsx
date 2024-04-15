@@ -17,7 +17,7 @@ export default function About() {
   const isInView = useInView(stackRef);
   const [hasDisplayed, setHasDisplayed] = React.useState(false);
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     if (isInView && !hasDisplayed) {
       setHasDisplayed(true);
     }

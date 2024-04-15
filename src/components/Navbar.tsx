@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {useEffect, useRef, useState} from "react";
 
-import { AppBar, Avatar, Box, Button, useTheme, useMediaQuery, Typography, IconButton, Menu, MenuItem } from "@mui/material";
+import { AppBar, Avatar, Box, Button, useTheme, useMediaQuery, Typography, IconButton, Menu, Stack, MenuItem} from "@mui/material";
 import {styled} from "@mui/system";
 import { useScroll, useTransform } from "framer-motion";
 import Logo from "@/assets/logo-large.webp";
@@ -17,6 +17,8 @@ const NavbarContainer = styled(AppBar)(({theme}) => ({
 
 export default function NavBar({onHeightChange} : {onHeightChange : (newHeight : number) => void}) {
 
+  const hasMountedRef = useRef(false);
+
   const navbarRef = useRef<HTMLElement | null>(null);
   const avatarRef = useRef<HTMLDivElement | null>(null);
 
@@ -25,7 +27,11 @@ export default function NavBar({onHeightChange} : {onHeightChange : (newHeight :
   const font = useTransform(scrollYProgress, [0, 1], [1, 0.75]);
 
   const theme = useTheme();
+
+  // Require Two Media Queries that are disjoint
   const isSmallViewport = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumViewport = useMediaQuery(theme.breakpoints.up("sm"));
+
 
   const menuELRef = useRef<HTMLDivElement | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -69,7 +75,7 @@ export default function NavBar({onHeightChange} : {onHeightChange : (newHeight :
           }}
         />
         {
-          isSmallViewport?
+          isSmallViewport &&
           <>
             <IconButton onClick={handleClick}>
               <MenuIcon />
@@ -89,13 +95,16 @@ export default function NavBar({onHeightChange} : {onHeightChange : (newHeight :
                     }
               }}
             >
-              <MenuItem><Link href="#home" style={{textDecoration: "none", color: theme.palette.primary.main}}>Home</Link></MenuItem>
-              <MenuItem><Link href="#about" style={{textDecoration: "none", color: theme.palette.primary.main}}>About Us</Link></MenuItem>
-              <MenuItem><Link href="#services" style={{textDecoration: "none", color: theme.palette.primary.main}}>Services</Link></MenuItem>
-              <MenuItem><Link href="#contact" style={{textDecoration: "none", color: theme.palette.primary.main}}>Contact Us</Link></MenuItem>
+              <MenuLink href="#home" title="Home" />
+              <MenuLink href="#about" title="About Us" />
+              <MenuLink href="#services" title="Services" />
+              <MenuLink href="#contact" title="Contact Us" />
             </Menu>
           </>
-          : // else
+         }
+        {/* else this media queries are always disjoint so it prevents switch from nav to button on small viewports on mount */}
+        {
+        isMediumViewport &&
           <Box>
             <NavBarLink href="#home" title="Home" />
             <NavBarLink href="#about" title="About Us" />
@@ -108,17 +117,30 @@ export default function NavBar({onHeightChange} : {onHeightChange : (newHeight :
   )
 }
 
-interface NavBarLinkProps {
+interface LinkProps {
   title: string;
   href: string;
 }
 
-function NavBarLink(props: NavBarLinkProps) {
+function NavBarLink(props: LinkProps) {
   return (
     <Button sx={{textTransform: "none", fontSize: "1em"}} href={props.href}>
       <Typography sx={{typography: {sm: "body2", lg: "body1"}}}>
         {props.title}
       </Typography>
     </Button>    
+  )
+}
+
+function MenuLink(props: LinkProps) {
+
+  const theme = useTheme();
+
+  return (
+    <MenuItem>
+      <Link href={props.href} style={{textDecoration: "none", color: theme.palette.primary.main, width: "100%"}}>
+        <Typography>{props.title}</Typography>
+      </Link>
+    </MenuItem>
   )
 }
