@@ -12,11 +12,11 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(5, '10s')
 });
 
-export async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const ip = req.connection.remoteAddress;
     if (ip === undefined) {
-      return res.status(500).json({success: false, message: 'Failed to get ip'});
+      return res.status(500).json({success: false, message: 'failed to get ip'});
     }
     const {limit, reset, remaining} = await ratelimit.limit(ip!);
     if (remaining === 0) {
