@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ArrowForward, ArrowForwardIosRounded, ErrorOutline, Instagram, Mail } from "@mui/icons-material";
-import { Stack, Typography, useTheme, Box, FilledInput, TextField, Grid, Button, Collapse, Popover, FormControl, TextFieldProps, Badge } from "@mui/material";
+import { Stack, Typography, useTheme, Box, FilledInput, TextField, Grid, Button, Collapse, Popover, FormControl, TextFieldProps, Badge, Snackbar, Alert } from "@mui/material";
 import * as React from "react";
 
 import LogoWhite from "@/assets/logo-white.png";
@@ -10,6 +10,7 @@ import ContactLink from "./ContactLink";
 import Link from "next/link";
 
 import contactSchema from "@/lib/schema/contact";
+import { flushSync } from "react-dom";
 
 type Error = {success: true} | {success: false, message: string}
 
@@ -37,8 +38,16 @@ export default function Contact() {
   const [message, setMessage] = React.useState("");
 
   const [errors, setErrors] = React.useState<Errors>(start);
+  
+  const [emailStatus, setEmailStatus] = React.useState<"success" | "error" | "loading" | "idle">("idle");
+  const [emailMessage, setEmailMessage] = React.useState<string>("");
 
   const handleEmail = async () => {
+    flushSync(() => {
+      setEmailStatus("loading");
+      setEmailMessage("");
+    })
+    
     const validate = contactSchema.safeParse({
       firstName,
       lastName,
@@ -54,7 +63,6 @@ export default function Contact() {
         newErrors[path] = {success: false, message: issue.message}
       })
       setErrors(newErrors);
-      console.log(newErrors);
     } else {
       setErrors({...start});
     }
@@ -65,13 +73,23 @@ export default function Contact() {
         method: "POST",
         body: JSON.stringify(validate)
       })
-      if (res.status !== 200) {
-        throw new Error('failed');
+      if (res.status === 429) {
+        setEmailStatus("error");
+        setEmailMessage("Try Again in a bit");
+        return;
       }
-      const json = await res.json();
-      console.log(json);
+
+      if (res.status !== 200) {
+        setEmailStatus("error");
+        setEmailMessage("Failed to send email");
+        return;
+      }
+
+      setEmailStatus("success");
+      setEmailMessage("Email Sent Successfully");
     } catch (err) {
-      console.log(err);
+      setEmailStatus("error");
+      setEmailMessage("Failed to send email");
     }
   }
 
@@ -140,6 +158,7 @@ export default function Contact() {
               onMouseLeave={() => setShowSubmitIcon(false)}
               sx={{textTransform: "none", borderRadius: "15px", backgroundColor: "#514339", border: "1px solid rgba(18, 19, 22, 0.68)", width: "fit-content", alignSelf: "flex-end"}} variant="contained"
               onClick={handleEmail}
+              disabled={emailStatus === "loading"}
             >
               Submit
               <Collapse in={showSubmitIcon} orientation="horizontal" sx={{position: "relative", transform: "translateY(10%)"}}>
@@ -230,6 +249,25 @@ export default function Contact() {
         </Grid>
       </Grid>
     </Box>
+
+    <Snackbar
+      open={emailStatus === "error" || emailStatus === "success"}
+      autoHideDuration={5000}
+      onClose={() => {
+        setEmailStatus("idle");
+        setEmailMessage("");
+      }}
+    >
+      <Alert
+        severity={emailStatus === "success" ? "success" : "error"}
+        onClose={() => {
+          setEmailStatus("idle");
+          setEmailMessage("");
+        }}
+      >
+        <Typography>{emailMessage}</Typography>
+      </Alert>
+    </Snackbar>
    </>
   )
 }
