@@ -28,7 +28,7 @@ export default function About() {
       <NoSSRTitle 
         title="About Us"
       />
-      <Stack ref={stackRef} direction={{xs: "column", md: "row"}} justifyContent="space-between" sx={{padding: "0.5rem", overflow: "hidden", background: theme.palette.background.default}}>
+      <Stack ref={stackRef} direction={{xs: "column", md: "row"}} justifyContent="space-between" alignItems="center" sx={{padding: "0.5rem", overflow: "hidden", background: theme.palette.background.default}}>
         <Slide direction="right" in={hasDisplayed} timeout={2500}>
           <Box sx={{display: "flex", padding: "1rem", width: {md: "50%"}}}>
             <Typography color="white" textAlign="justify" sx={{
@@ -45,7 +45,7 @@ export default function About() {
         </Slide>
         <Slide direction="left" in={hasDisplayed} timeout={2500}>
           <Box sx={{
-            width: {md: "50%"},
+            width: {xs: "80%", md: "40%"},
             aspectRatio: `${AboutImage.width} / ${AboutImage.height}`
           }}>
             <DomainImage 
